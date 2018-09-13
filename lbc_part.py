@@ -51,8 +51,8 @@ def lbcnn(prev_input, lbc_size, lbc_channels, output_channels, sparsity):
     A1 = tf.nn.relu(Z)
     
     # the second step is 1x1 convolution
-    I = tf.get_variable("I" + str(layer_no), shape = [1, 1, lbc_channels, output_channels], dtype=tf.float32)
-    A2 = tf.nn.conv2d(input = A1, filter = I, strides = [1, 1, 1, 1], padding = "SAME")
+    A2 = tf.contrib.layers.conv2d(inputs = A1, num_outputs = output_channels, kernel_size = 1, \
+            stride = 1, padding = "SAME", activation_fn = None)
     
     # add input and output, like Resnet
     A2 = tf.add(A2, prev_input)
@@ -81,7 +81,7 @@ def model(X, options):
     X_in = X3
     for i in range(conv_layers):
         with tf.name_scope("Lbcnn"):
-            X_new = lbcnn(prev_input = X_in, layer_no = i, lbc_size = lbc_size, \
+            X_new = lbcnn(prev_input = X_in, lbc_size = lbc_size, \
                 lbc_channels = lbc_filters, output_channels = output_channels, sparsity = sparsity)
             X_in = X_new
 

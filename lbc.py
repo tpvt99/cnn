@@ -40,7 +40,8 @@ def lbcnn(prev_input, lbc_size, lbc_channels, output_channels, sparsity):
 
     # first, we need to initialize anchor weight
     prev_channels = prev_input.shape[3]
-    weight = generate_lbc_weights(height = lbc_size, width = lbc_size, prev_output_channels = prev_channels, number_of_filters = lbc_channels, sparsity = sparsity)
+    weight = generate_lbc_weights(height = lbc_size, width = lbc_size, \
+        prev_output_channels = prev_channels, number_of_filters = lbc_channels, sparsity = sparsity)
 
     # batch normalization
     B = tf.contrib.layers.batch_norm(prev_input)

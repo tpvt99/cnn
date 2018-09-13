@@ -72,14 +72,16 @@ def model(X, options):
 
     # prev-convolution so when add in+out like ResNet, we do not need to padding the shortcut
     with tf.name_scope("Pre-Conv"):
-        X1 = tf.contrib.layers.conv2d(inputs = X, num_outputs = output_channels, kernel_size = lbc_size, stride = 1, padding = "SAME", activation_fn = None)
+        X1 = tf.contrib.layers.conv2d(inputs = X, num_outputs = output_channels,\
+                kernel_size = lbc_size, stride = 1, padding = "SAME", activation_fn = None)
         X2 = tf.contrib.layers.batch_norm(X1)
         X3 = tf.nn.relu(X2)
 
     X_in = X3
     for i in range(conv_layers):
         with tf.name_scope("Lbcnn"):
-            X_new = lbcnn(prev_input = X_in, layer_no = i, lbc_size = lbc_size, lbc_channels = lbc_filters, output_channels = output_channels, sparsity = sparsity)
+            X_new = lbcnn(prev_input = X_in, layer_no = i, lbc_size = lbc_size, \
+                lbc_channels = lbc_filters, output_channels = output_channels, sparsity = sparsity)
             X_in = X_new
 
     # average pool

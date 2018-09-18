@@ -152,9 +152,7 @@ def model(X, Keep_probability, options):
                 kernel_size = lbc_size, stride = 1, padding = "SAME", activation_fn = None)
         X2 = tf.contrib.layers.batch_norm(X1)
         X3 = tf.nn.relu(X2)
-    print(X1)
-    print(X2)
-    print(X3)
+
     X_in = X3
 
     # conv1
@@ -162,19 +160,6 @@ def model(X, Keep_probability, options):
         with tf.name_scope("conv"):
             X_out,BB,ZZ,AA,AAA = lbcnn(prev_input = X_in, lbc_size = lbc_size, \
                 lbc_channels = lbc_filters, output_channels = output_channels, sparsity = sparsity)
-
-            if i == 0:
-                BB1 = BB
-                ZZ1 = ZZ
-                AA1 = AA
-                AA2 = AAA
-                X_1 = X_out
-            elif i == 1:
-                BB2 = BB
-                ZZ2 = ZZ
-                AA3 = AA
-                AA4 = AAA
-                X_2 = X_out
 
             X_in = X_out
 
@@ -202,13 +187,8 @@ def model(X, Keep_probability, options):
     with tf.name_scope("Fully"):
         F4 = tf.contrib.layers.fully_connected(inputs = F3, num_outputs = output_classes, activation_fn = None)
 
-    print(P)
-    print(F1)
-    print(F2)
-    print(F3)
-    print(F4)
 
-    return F4, P, F1, X3, X_1, BB1, ZZ1, AA1, AA2, BB2, ZZ2, AA3, AA4
+    return F4,
 
 def compute_cost(A, Y):
     l2_loss = 1e-4 * tf.add_n([tf.nn.l2_loss(tf.cast(v, tf.float32)) for v in tf.trainable_variables()])
@@ -276,23 +256,10 @@ def CNN_training(X_train, Y_train, X_test, Y_test, options):
                 a_time = time.time()
                 X_batch, Y_batch = mini_batch
 
-                _, opti_cost, ah1, ah2, ah3, ah4, ah5, ah6, ah7, ah8, ah9, ah10, ah11, ah12 = sess.run([optimizer, cost, X1, X2, X3, X4, BB1, ZZ1, AA1, AA2, BB2, ZZ2, AA3, AA4], feed_dict = {X: X_batch, Y: Y_batch, Keep_prob: keep_prob})
+                _, opti_cost= sess.run([optimizer, cost], feed_dict = {X: X_batch, Y: Y_batch, Keep_prob: keep_prob})
                 top_1, top_5 = sess.run([top1_accuracy, top5_accuracy], feed_dict = {X: X_batch, Y: Y_batch, Keep_prob: 1})
                 b_time = time.time()
-                if i == 0 and batch_count == 0:
-                    np.save("ah1", ah1)
-                    np.save("ah2", ah2)
-                    np.save("ah3", ah3)
-                    np.save("ah4", ah4)
-                    np.save("ah5", ah5)
-                    np.save("ah6", ah6)
-                    np.save("ah7", ah7)
-                    np.save("ah8", ah8)
-                    np.save("ah9", ah9)
-                    np.save("ah10", ah10)
-                    np.save("ah11", ah11)
-                    np.save("ah12", ah12)
-                    i+=1
+
 
                 print(" | Epoches:  [%d][%d|%d]   Time: %5.5f  Cost: %3.5f  top1 %7.3f  top5 %7.3f" %(epoch, batch_count+1, num_minibatches, b_time - a_time, opti_cost, top_1*100, top_5*100))
 
